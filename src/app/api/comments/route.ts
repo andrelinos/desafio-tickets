@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    await prisma.comment.create({
+    const comment = await prisma.comment.create({
       data: {
         ticketId,
         userId,
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
     await revalidateTag('comments')
     await revalidateTag('tickets')
 
-    return NextResponse.json({ message: 'success' }, { status: 201 })
+    return NextResponse.json(comment)
   } catch {
     return NextResponse.json({ message: 'Operation failed' }, { status: 400 })
   }

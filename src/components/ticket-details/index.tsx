@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import clsx from 'clsx'
 import { SendHorizontal } from 'lucide-react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import { toast } from 'sonner'
@@ -28,7 +28,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
-import type { TicketProps } from '@/_types/ticket'
+import type { CommentProps, TicketProps } from '@/_types/ticket'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -65,6 +65,8 @@ export function TicketFormDetails({
   onOpen,
   onChange,
 }: TicketDetailsProps) {
+  const divRef = useRef<HTMLDivElement>(null)
+  const [comments, setComments] = useState<CommentProps[]>(data?.comments || [])
   const [comment, setComment] = useState('')
   const [isSubmittingComment, setIsSubmittingComment] = useState(false)
 
@@ -112,6 +114,7 @@ export function TicketFormDetails({
 
     // resetField('title')
     // resetField('description')
+
     onChange()
   }
 
@@ -129,7 +132,7 @@ export function TicketFormDetails({
         ticketId: data.id,
       }
 
-      await api('/api/comments', {
+      const response = await api('/api/comments', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -139,6 +142,10 @@ export function TicketFormDetails({
           tags: ['tickets'],
         },
       })
+
+      console.log(response)
+
+      setComments([...comments, response])
 
       setComment('')
 
@@ -290,7 +297,7 @@ export function TicketFormDetails({
                 <div className="flex w-full flex-col gap-4 rounded-lg border">
                   <ScrollArea className="h-96 max-h-96 w-full">
                     <div className="flex w-full flex-col gap-4 p-4 pt-8 pb-20">
-                      {data?.comments?.map((comment, i) => {
+                      {comments?.map((comment, i) => {
                         return (
                           <div
                             key={comment.id}
@@ -317,6 +324,7 @@ export function TicketFormDetails({
                           </div>
                         )
                       })}
+                      <div ref={divRef} />
                     </div>
                   </ScrollArea>
                   <div className="flex items-center gap-1 p-2">

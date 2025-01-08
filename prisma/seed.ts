@@ -67,7 +67,7 @@ async function main() {
 
   // Criação de tickets
   for (const ticket of tickets) {
-    const commentsData = Array.from({ length: 5 }).map(() => {
+    const commentsData = Array.from({ length: 2 }).map(() => {
       const randomUser = getRandomUser()
       return {
         content: faker.lorem.sentence(19),

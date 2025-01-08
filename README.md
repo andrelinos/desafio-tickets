@@ -27,3 +27,10 @@ npm run dev
 - Poderá também apagar um ticket ao clicar no botão com o simbolo de uma lixeira ao lado direto da linha
 - Poderá adicionar novos tickets
 - Nas propriedades do Ticket, poderá também inserir novos comentários
+
+Algumas imagens
+![Descrição da Imagem](.github/home.png)
+![Descrição da Imagem](.github/edit.png)
+![Descrição da Imagem](.github/change-status.png)
+![Descrição da Imagem](.github/change-status-set.png)
+![Descrição da Imagem](.github/delete.png)

@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String @id @default(uuid())
+  username String @unique
+
+  tickets  Ticket[]
+  comments Comment[]
+
+  @@map("users")
+}
+
+model Ticket {
+  id          String   @id @default(uuid())
+  ticketId    String   @unique @map("ticket_id")
+  title       String
+  status      String   @default("open")
+  description String
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now())
+
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String? @map("user_id")
+
+  comments Comment[]
+
+  @@map("tickets")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String   @default("teste")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  ticket   Ticket? @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  ticketId String? @map("ticket_id")
+  user     User?   @relation(fields: [userId], references: [id])
+  userId   String? @map("user_id")
+
+  @@map("comments")
+}

@@ -1,7 +1,7 @@
 import type { TicketStatusProps } from '@/_types/ticket'
 
 export function translateStatus(
-  status: TicketStatusProps
+  status: TicketStatusProps | undefined
 ): JSX.Element | string {
   if (!status) {
     return 'Status Desconhecido'

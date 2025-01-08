@@ -1,4 +1,8 @@
+import clsx from 'clsx'
+import type { ReactNode } from 'react'
+
 import type { TicketStatusProps } from '@/_types/ticket'
+
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -9,8 +13,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import clsx from 'clsx'
-import type { ReactNode } from 'react'
 
 interface Props {
   title: ReactNode

@@ -254,7 +254,6 @@ export function TicketForm({ data, isNew = false, onChange }: TicketFormProps) {
               Comentários
             </Label>
             <div className="flex w-full flex-col gap-4 rounded-lg border">
-              {/* <ScrollArea className="flex h-96 max-h-96 w-full"> */}
               <div
                 ref={divRef}
                 className="custom-scrollbar flex h-96 max-h-96 w-full flex-col gap-4 overflow-y-auto p-4 pt-8 pb-20"
@@ -285,9 +284,8 @@ export function TicketForm({ data, isNew = false, onChange }: TicketFormProps) {
                     </div>
                   )
                 })}
-                {/* <div ref={divRef} /> */}
               </div>
-              {/* </ScrollArea> */}
+
               <div className="flex items-center gap-1 p-2">
                 <Textarea
                   placeholder="Digite uma mensagem"

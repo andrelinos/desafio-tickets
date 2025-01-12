@@ -91,6 +91,13 @@ $ npm run dev
 # The server will initialize in the <http://localhost:3000>
 ```
 
+## Screenshots
+
+![Edit Ticket](.github/edit.png)
+![Open Dropdown Menu - Change status ticket](.github/change-status.png)
+![Confirm status ticket](.github/change-status-set.png)
+![Delete ticket](.github/delete.png)
+
 ## :memo: License ##
 
 This project is under license from MIT. For more details, see the [LICENSE](LICENSE.md) file.

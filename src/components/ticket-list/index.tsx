@@ -13,75 +13,49 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
-import type { TicketProps, TicketStatusProps } from '@/_types/ticket'
+import type { TicketProps } from '@/_types/ticket'
 
-import { TableDropdownMenu } from '@/components/table-dropdown-menu'
-import { TicketFormDetails } from '@/components/ticket-details'
 import { Button } from '@/components/ui/button'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 
-import { getDifferenceTimeFromDate, translateStatus } from '@/utils/formatters'
+import { getDifferenceTimeFromDate } from '@/utils/formatters'
 
-import { handleTicket } from '@/services'
-
-import { AddTicketForm } from '../add-ticket'
-import { TicketStatusFilter, ticketCustomToast } from './components'
-import { DialogDeleteTicket } from './components/dialog-delete-ticket'
-
-interface MenuDropdownProps {
-  id: string
-  ticketId: string
-  ticketNewStatus: TicketStatusProps
-}
+import {
+  DialogDeleteTicket,
+  TicketForm,
+  TicketModal,
+  TicketStatus,
+  TicketStatusFilter,
+} from './components'
 
 interface Props {
   data: TicketProps[]
 }
 
 export function TicketTablet({ data }: Props) {
+  const [isNewTicket, setIsNewTicket] = useState(false)
+  const [onOpenTicket, setOnOpenTicket] = useState(false)
+
   const [selectedFilter, setSelectedFilter] = useState('all')
   const [tickets, setTickets] = useState<TicketProps[]>(data)
-  const [ticketSelected, setTicketSelected] = useState<TicketProps>()
-  const [onOpenTicket, setOnOpenTicket] = useState(false)
-  const [onOpenTicketAdd, setOnOpenTicketAdd] = useState(false)
+  const [ticketSelected, setTicketSelected] = useState<
+    TicketProps | undefined
+  >()
 
-  function onChangeTicket() {
+  function onModalOpen() {
     setOnOpenTicket(!onOpenTicket)
   }
 
   function onChangeTicketAdd() {
-    setOnOpenTicketAdd(!onOpenTicketAdd)
+    setIsNewTicket(true)
+    setTicketSelected(undefined)
+    onModalOpen()
   }
 
   function handleSelectTicket(ticket: TicketProps) {
+    setIsNewTicket(false)
     setTicketSelected(ticket)
-    console.log(ticket)
-    setOnOpenTicket(!onOpenTicket)
-  }
-
-  function handleUpdateTicketStatus({
-    id,
-    ticketId,
-    ticketNewStatus,
-  }: MenuDropdownProps) {
-    if (!tickets) {
-      return
-    }
-
-    const updatedTickets = tickets.map(ticket =>
-      ticket.id === id ? { ...ticket, status: ticketNewStatus } : ticket
-    )
-
-    const ticketUpdated = updatedTickets.find(t => t.id === id)
-
-    async function updateTicketStatus() {
-      if (!ticketUpdated) {
-        return
-      }
-      handleTicket({ ticket: ticketUpdated, method: 'PUT' })
-    }
-
-    ticketCustomToast(ticketId, updateTicketStatus)
+    onModalOpen()
   }
 
   function handleStatusSelect(value: string) {
@@ -114,11 +88,15 @@ export function TicketTablet({ data }: Props) {
                 selectedFilter={selectedFilter}
                 onSelect={handleStatusSelect}
               />
-              <AddTicketForm
-                isNew
-                onOpen={onOpenTicketAdd}
-                onChange={onChangeTicketAdd}
-              />
+
+              <Button
+                className="mx-auto w-full max-w-xs sm:max-w-44"
+                onClick={onChangeTicketAdd}
+              >
+                <p className="line-clamp-2 max-w-[400px] whitespace-break-spaces text-left">
+                  Adicionar
+                </p>
+              </Button>
             </div>
 
             <ScrollArea className="mx-auto w-full max-w-[360px] rounded-md border px-2 py-6 md:max-w-[700px] lg:max-w-[1000px] xl:max-w-7xl">
@@ -152,17 +130,7 @@ export function TicketTablet({ data }: Props) {
                         </Button>
                       </TableCell>
                       <TableCell>
-                        <TableDropdownMenu
-                          title={translateStatus(ticket.status)}
-                          status={ticket.status}
-                          onChange={value =>
-                            handleUpdateTicketStatus({
-                              id: ticket.id,
-                              ticketId: ticket.ticketId,
-                              ticketNewStatus: value,
-                            })
-                          }
-                        />
+                        <TicketStatus data={ticket} />
                       </TableCell>
                       <TableCell className="max-w-20 text-right">
                         {getDifferenceTimeFromDate(ticket.updatedAt)}
@@ -186,11 +154,14 @@ export function TicketTablet({ data }: Props) {
         ) : (
           <div className="size-full">
             <div className="flex w-full justify-end gap-2">
-              <AddTicketForm
-                isNew
-                onOpen={onOpenTicketAdd}
-                onChange={onChangeTicketAdd}
-              />
+              <Button
+                className="mx-auto w-full max-w-xs sm:max-w-44"
+                onClick={onChangeTicketAdd}
+              >
+                <p className="line-clamp-2 max-w-[400px] whitespace-break-spaces text-left">
+                  Adicionar
+                </p>
+              </Button>
             </div>
             <div className="flex size-full flex-1 items-center justify-center pt-16">
               <p className="text-center text-muted-foreground ">
@@ -202,11 +173,18 @@ export function TicketTablet({ data }: Props) {
       </div>
 
       {onOpenTicket && (
-        <TicketFormDetails
+        <TicketModal
           data={ticketSelected}
           onOpen={onOpenTicket}
-          onChange={onChangeTicket}
-        />
+          onChange={onModalOpen}
+        >
+          <TicketForm
+            isNew={isNewTicket}
+            data={ticketSelected}
+            onOpen={onOpenTicket}
+            onChange={onModalOpen}
+          />
+        </TicketModal>
       )}
     </>
   )

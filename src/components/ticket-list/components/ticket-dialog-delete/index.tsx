@@ -22,6 +22,8 @@ export function DialogDeleteTicket({ data }: Props) {
     handleTicket({ ticket: data, method: 'DELETE' })
   }
 
+  console.log('DELETE')
+
   return (
     <Dialog>
       <DialogTrigger asChild>

@@ -4,7 +4,7 @@ import type { TicketProps } from '@/_types/ticket'
 
 import { Login } from '@/components/login'
 import { LogoutButton } from '@/components/logout'
-import { TicketTablet } from '@/components/table-ticket'
+import { TicketTablet } from '@/components/ticket-list'
 
 import { getServerCookie } from '@/hooks/cookies'
 

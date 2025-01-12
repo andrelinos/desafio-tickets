@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import clsx from 'clsx'
 import { SendHorizontal } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import { toast } from 'sonner'
@@ -56,13 +56,11 @@ export function TicketForm({ data, isNew = false, onChange }: TicketFormProps) {
   const [comment, setComment] = useState('')
   const [isSubmittingComment, setIsSubmittingComment] = useState(false)
 
-  console.log('FORM ::', data, isNew)
-
   const {
     register,
     handleSubmit,
     control,
-    resetField,
+
     formState: { errors, isSubmitting },
   } = useForm<FormSchema>({
     defaultValues: data ?? {},
@@ -128,8 +126,6 @@ export function TicketForm({ data, isNew = false, onChange }: TicketFormProps) {
         },
       })
 
-      console.log(response)
-
       setComments([...comments, response])
 
       setComment('')
@@ -148,7 +144,22 @@ export function TicketForm({ data, isNew = false, onChange }: TicketFormProps) {
       }
     }
     setIsSubmittingComment(false)
+    goToEndScroll()
   }
+
+  function goToEndScroll() {
+    if (divRef?.current) {
+      divRef.current.scrollTo({
+        top: divRef.current.scrollHeight,
+        behavior: 'smooth',
+      })
+    }
+  }
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    goToEndScroll()
+  }, [])
 
   return (
     <ScrollArea className="flex max-h-full w-full flex-col pt-6 pb-16">
@@ -243,38 +254,40 @@ export function TicketForm({ data, isNew = false, onChange }: TicketFormProps) {
               Comentários
             </Label>
             <div className="flex w-full flex-col gap-4 rounded-lg border">
-              <ScrollArea className="h-96 max-h-96 w-full">
-                <div className="flex w-full flex-col gap-4 p-4 pt-8 pb-20">
-                  {comments?.map((comment, i) => {
-                    return (
+              {/* <ScrollArea className="flex h-96 max-h-96 w-full"> */}
+              <div
+                ref={divRef}
+                className="custom-scrollbar flex h-96 max-h-96 w-full flex-col gap-4 overflow-y-auto p-4 pt-8 pb-20"
+              >
+                {comments?.map((comment, i) => {
+                  return (
+                    <div
+                      key={comment.id}
+                      className={clsx('w-full ', {
+                        'pl-6': comment.userId === user?.id,
+                        'pr-6': comment.userId !== user?.id,
+                      })}
+                    >
                       <div
-                        key={comment.id}
-                        className={clsx('w-full ', {
-                          'pl-6': comment.userId === user?.id,
-                          'pr-6': comment.userId !== user?.id,
-                        })}
+                        className={clsx(
+                          'flex w-fit flex-col items-end rounded-md p-2 shadow-md',
+                          {
+                            'ml-auto bg-green-200': comment.userId === user?.id,
+                            'bg-zinc-100': comment.userId !== user?.id,
+                          }
+                        )}
                       >
-                        <div
-                          className={clsx(
-                            'flex w-fit flex-col items-end rounded-md p-2 shadow-md',
-                            {
-                              'ml-auto bg-green-200':
-                                comment.userId === user?.id,
-                              'bg-zinc-100': comment.userId !== user?.id,
-                            }
-                          )}
-                        >
-                          <span className="w-full">{comment?.content}</span>
-                          <span className="text-xs text-zinc-500 italic">
-                            - {comment?.user?.username}
-                          </span>
-                        </div>
+                        <span className="w-full">{comment?.content}</span>
+                        <span className="text-xs text-zinc-500 italic">
+                          - {comment?.user?.username}
+                        </span>
                       </div>
-                    )
-                  })}
-                  <div ref={divRef} />
-                </div>
-              </ScrollArea>
+                    </div>
+                  )
+                })}
+                {/* <div ref={divRef} /> */}
+              </div>
+              {/* </ScrollArea> */}
               <div className="flex items-center gap-1 p-2">
                 <Textarea
                   placeholder="Digite uma mensagem"

@@ -93,6 +93,7 @@ $ npm run dev
 
 ## Screenshots
 
+![Home List Ticket](.github/home.png)
 ![Edit Ticket](.github/edit.png)
 ![Open Dropdown Menu - Change status ticket](.github/change-status.png)
 ![Confirm status ticket](.github/change-status-set.png)
